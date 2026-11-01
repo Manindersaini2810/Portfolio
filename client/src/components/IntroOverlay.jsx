@@ -47,9 +47,7 @@ export default function IntroOverlay({ onDecode, onFinish, onSkip }) {
       aria-live="polite"
       aria-label="Portfolio system startup"
     >
-      <MatrixRain
-        className="intro-rain"
-      />
+      <MatrixRain className="intro-rain" />
       <div className="intro-terminal">
         <p>
           {bootTyping.visibleLines[0]}

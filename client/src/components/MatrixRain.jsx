@@ -62,7 +62,7 @@ export default function MatrixRain({ className = '' }) {
     let dimensions = resizeCanvas(canvas, context);
     let frame = null;
     let previousTimestamp = 0;
-    let reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     const draw = (deltaSeconds = 0) => {
       const { width, height, columns } = dimensions;
