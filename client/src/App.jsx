@@ -42,7 +42,7 @@ function PortfolioRoutes() {
   return (
     <IntroContext.Provider value={{ phase, hasDecoded }}>
       <div className="relative flex min-h-screen flex-col">
-        <MatrixRain className="matrix-background" opacity={0.075} speed={0.24} />
+        <MatrixRain className="matrix-background" />
         <Navbar />
         <main className="relative z-10 flex-1">
           <Routes location={location} key={location.pathname}>
