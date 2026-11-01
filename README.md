@@ -32,6 +32,10 @@ A React, Vite, Tailwind CSS, Express and MongoDB portfolio with a neon-green ter
 
 Build the static frontend with `npm run build`. Start the API separately with `npm start`; it listens on `PORT` (default `5000`). `GET /api/health` reports API and database readiness.
 
+## Tuning animations
+
+Adjust the named values in `client/src/config/animation.js` to tune the typing pace and jitter, pauses between terminal lines and command output, cursor blink, intro duration, scramble reveal timing, and Matrix rain speed. Rain speed is in pixels per second; the other timing values are in milliseconds. Reduced-motion preferences disable animated typing, decoding, and falling text.
+
 ## Content and assets
 
 - Add project covers to `client/public/images/projects/` and set the exact-case matching `image` path in `server/seed/seed.js` (for example, `/images/projects/my-project.png`). Project order is controlled by its `order` value.
