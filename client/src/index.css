@@ -83,7 +83,6 @@
       z-index: 0;
       overflow: hidden;
       pointer-events: none;
-      mask-image: linear-gradient(to bottom, #000 0%, transparent 92%);
     }
 
     .intro-overlay {
@@ -149,7 +148,7 @@
     .scramble-flash {
       color: #caffd3;
       text-shadow: 0 0 12px #00ff41;
-      animation: character-flash 170ms ease-out;
+      animation: character-flash ease-out;
     }
 
     .portrait-frame {
@@ -290,18 +289,12 @@
       animation: page-enter 240ms ease-out both;
     }
 
-    .cursor-blink {
-      animation: cursor-blink 1s steps(2, start) infinite;
-    }
-
-    .matrix-digit {
-      position: absolute;
-      top: -20%;
+    .typewriter-cursor {
+      display: inline-block;
       color: #00ff41;
-      font-size: 11px;
-      line-height: 1.8;
-      white-space: pre;
-      animation: matrix-fall linear infinite;
+      animation-name: cursor-blink;
+      animation-timing-function: steps(2, start);
+      animation-iteration-count: infinite;
     }
 
     @keyframes cursor-blink {
@@ -311,10 +304,6 @@
     @keyframes page-enter {
       from { opacity: 0; transform: translateY(7px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes matrix-fall {
-      to { transform: translateY(140vh); }
     }
 
     @media (prefers-reduced-motion: reduce) {
