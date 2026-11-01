@@ -1,10 +1,13 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useState } from 'react';
 import { ArrowDownToLine, ArrowRight, Award, FolderGit2, ShieldCheck } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { IntroContext } from '../context/IntroContext.js';
 import HeroPortrait from '../components/HeroPortrait.jsx';
 import ScrambledText from '../components/ScrambledText.jsx';
 import TerminalWindow from '../components/TerminalWindow.jsx';
+import TypewriterCursor from '../components/TypewriterCursor.jsx';
+import { COMMAND_TO_OUTPUT_MS, LINE_PAUSE_MS } from '../config/animation.js';
+import { useTypewriter } from '../hooks/useTypewriter.js';
 
 const resumeUrl = '/resume/Maninder_Singh_Resume.pdf';
 const transcript = [
@@ -36,42 +39,45 @@ const quickLinks = [
     icon: Award,
   },
 ];
-const fullTranscript = transcript.map(([command, output]) => command + output).join('');
+const transcriptLines = transcript.flatMap(([command, output], index) => [
+  { text: `$ ${command}`, pauseAfterMs: COMMAND_TO_OUTPUT_MS },
+  {
+    text: output,
+    pauseAfterMs: index === transcript.length - 1 ? 0 : LINE_PAUSE_MS,
+  },
+]);
 const promptCommands =
   'Commands: help, whoami, about, projects, certs, resume, contact, skills, github';
+
+function CommandHistoryEntry({ entry }) {
+  const lines = [
+    { text: `$ ${entry.input}`, pauseAfterMs: COMMAND_TO_OUTPUT_MS },
+    { text: entry.output, pauseAfterMs: 0 },
+  ];
+  const typing = useTypewriter(lines);
+
+  return (
+    <div>
+      <p className="text-[#00ff41]">
+        {typing.visibleLines[0]}
+        {typing.currentLineIndex === 0 && typing.isTyping && <TypewriterCursor />}
+      </p>
+      <p className="whitespace-pre-wrap pl-3 text-white/75">
+        {typing.visibleLines[1]}
+        {typing.currentLineIndex === 1 && typing.isTyping && <TypewriterCursor />}
+      </p>
+    </div>
+  );
+}
 
 export default function Home() {
   const navigate = useNavigate();
   const { phase, hasDecoded } = useContext(IntroContext);
-  const [charactersTyped, setCharactersTyped] = useState(0);
   const [command, setCommand] = useState('');
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const isIntroFinished = phase === 'done' || phase === 'skipped';
-  const transcriptOffsets = useMemo(() => {
-    let offset = 0;
-    return transcript.map(([cmd, output]) => {
-      const current = { command: offset, output: offset + cmd.length };
-      offset += cmd.length + output.length;
-      return current;
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!isIntroFinished) return undefined;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setCharactersTyped(fullTranscript.length);
-      return undefined;
-    }
-    const timer = window.setInterval(() => {
-      setCharactersTyped((current) => {
-        const next = Math.min(current + 4, fullTranscript.length);
-        if (next === fullTranscript.length) window.clearInterval(timer);
-        return next;
-      });
-    }, 16);
-    return () => window.clearInterval(timer);
-  }, [isIntroFinished]);
+  const transcriptTyping = useTypewriter(transcriptLines, isIntroFinished);
 
   const executeCommand = (event) => {
     event.preventDefault();
@@ -145,11 +151,11 @@ export default function Home() {
             aria-label="MANINDER SINGH — Full-Stack Developer | Cloud Security & ML Enthusiast"
             className="mb-5 text-2xl font-bold leading-tight text-white sm:text-3xl"
           >
-            <ScrambledText active={phase === 'decode'} duration={1250}>
+            <ScrambledText active={phase === 'decode'}>
               MANINDER SINGH
             </ScrambledText>
             <span className="mt-2 block text-sm font-medium leading-7 text-[#00ff41] sm:text-base">
-              <ScrambledText active={phase === 'decode'} duration={1450}>
+              <ScrambledText active={phase === 'decode'}>
                 Full-Stack Developer | Cloud Security &amp; ML Enthusiast
               </ScrambledText>
             </span>
@@ -165,42 +171,35 @@ export default function Home() {
                 ))}
               </div>
               <div aria-hidden="true">
-                {transcript.map(([cmd, output], index) => {
-                  const start = transcriptOffsets[index];
-                  const commandProgress = Math.max(
-                    0,
-                    Math.min(cmd.length, charactersTyped - start.command),
-                  );
-                  const outputProgress = Math.max(
-                    0,
-                    Math.min(output.length, charactersTyped - start.output),
-                  );
+                {transcriptLines.map((line, index) => {
+                  const text = transcriptTyping.visibleLines[index];
+                  const current = transcriptTyping.currentLineIndex === index;
+                  if (!text && !current) return null;
 
                   return (
-                    <div className="mb-3 last:mb-0" key={cmd}>
-                      {commandProgress > 0 && (
-                        <p className="text-[#00ff41]">
-                          $ {cmd.slice(0, commandProgress)}
-                        </p>
-                      )}
-                      {outputProgress > 0 && (
-                        <p className="whitespace-pre-wrap pl-3 text-white/75">
-                          {output.slice(0, outputProgress)}
-                        </p>
-                      )}
-                    </div>
+                    <p
+                      className={
+                        index % 2 === 0
+                          ? 'text-[#00ff41]'
+                          : 'mb-3 whitespace-pre-wrap pl-3 text-white/75'
+                      }
+                      key={`${index}-${line.text}`}
+                    >
+                      {text}
+                      {current && transcriptTyping.isTyping && <TypewriterCursor />}
+                    </p>
                   );
                 })}
               </div>
 
-              {charactersTyped >= fullTranscript.length && (
+              {transcriptTyping.isComplete && (
                 <div className="border-t border-white/10 pt-3">
                   <div className="mb-3 space-y-3" aria-live="polite">
                     {history.map((entry, index) => (
-                      <div key={`${entry.input}-${index}`}>
-                        <p className="text-[#00ff41]">$ {entry.input}</p>
-                        <p className="whitespace-pre-wrap pl-3 text-white/75">{entry.output}</p>
-                      </div>
+                      <CommandHistoryEntry
+                        key={`${entry.input}-${index}`}
+                        entry={entry}
+                      />
                     ))}
                   </div>
                   <form onSubmit={executeCommand} className="flex items-center gap-2">

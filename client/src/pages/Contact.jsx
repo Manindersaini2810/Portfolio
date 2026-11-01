@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Github, Linkedin, Mail, MapPin, Send } from 'lucide-react';
 import { sendContactMessage } from '../api';
 import TerminalWindow from '../components/TerminalWindow';
+import TypewriterCursor from '../components/TypewriterCursor.jsx';
+import { useTypewriter } from '../hooks/useTypewriter.js';
 
 const links = [
   { label: 'GitHub', href: 'https://github.com/Manindersaini2810', icon: Github },
@@ -44,6 +46,12 @@ export default function Contact() {
     success: 'message_sent: success',
     error: 'message_sent: error',
   }[status];
+  const logLines = [
+    { text: '$ system_status: online' },
+    { text: `$ ${statusLine}` },
+    ...(status === 'error' ? [{ text: `$ ${errorMessage}` }] : []),
+  ];
+  const logTyping = useTypewriter(logLines);
 
   return (
     <div className="page-enter mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
@@ -125,17 +133,20 @@ export default function Contact() {
         <div className="space-y-5">
           <TerminalWindow title="terminal.log">
             <div className="space-y-3 text-xs" aria-live="polite">
-              <p className="text-white/65">
-                <span className="text-[#00ff41]">$ </span>system_status: online
-              </p>
-              <p className="text-white/65">
-                <span className="text-[#00ff41]">$ </span>{statusLine}
-              </p>
-              {status === 'error' && (
-                <p className="break-words text-red-300">
-                  <span className="text-red-400">$ </span>{errorMessage}
-                </p>
-              )}
+              {logTyping.visibleLines.map((line, index) => {
+                const current = logTyping.currentLineIndex === index;
+                if (!line && !current) return null;
+
+                return (
+                  <p
+                    className={index === 2 ? 'break-words text-red-300' : 'text-white/65'}
+                    key={`${index}-${logLines[index].text}`}
+                  >
+                    {line}
+                    {current && logTyping.isTyping && <TypewriterCursor />}
+                  </p>
+                );
+              })}
             </div>
           </TerminalWindow>
 
