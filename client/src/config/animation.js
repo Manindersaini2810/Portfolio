@@ -1,9 +1,9 @@
-export const TYPE_SPEED_MS = 85;
-export const TYPE_SPEED_JITTER_MS = 25;
-export const LINE_PAUSE_MS = 900;
-export const COMMAND_TO_OUTPUT_MS = 500;
+export const TYPE_SPEED_MS = 60;
+export const TYPE_SPEED_JITTER_MS = 15;
+export const LINE_PAUSE_MS = 600;
+export const COMMAND_TO_OUTPUT_MS = 350;
 export const CURSOR_BLINK_MS = 600;
 export const BOOT_SEQUENCE_TOTAL_MS = 5500;
-export const SCRAMBLE_STEP_MS = 70;
-export const SCRAMBLE_REVEAL_DELAY_MS = 110;
+export const SCRAMBLE_STEP_MS = 50;
+export const SCRAMBLE_REVEAL_DELAY_MS = 80;
 export const RAIN_SPEED_PX_PER_SEC = 35;
