@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { IntroContext } from '../context/IntroContext.js';
 import ScrambledText from './ScrambledText.jsx';
+import TypewriterCursor from './TypewriterCursor.jsx';
 
 const resumeUrl = '/resume/Maninder_Singh_Resume.pdf';
 
@@ -29,7 +30,7 @@ export default function Navbar() {
           className="whitespace-nowrap text-sm font-bold text-[#00ff41] sm:text-base"
           aria-label="root at portfolio home"
         >
-          &gt;_ root@portfolio<span className="cursor-blink">_</span>
+          &gt;_ root@portfolio<TypewriterCursor />
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
@@ -47,7 +48,7 @@ export default function Navbar() {
                 }`
               }
             >
-              <ScrambledText active={phase === 'decode'} duration={900}>
+              <ScrambledText active={phase === 'decode'}>
                 {item.label}
               </ScrambledText>
             </NavLink>
@@ -96,7 +97,7 @@ export default function Navbar() {
                     }`
                   }
                 >
-                  <ScrambledText active={phase === 'decode'} duration={900}>
+                  <ScrambledText active={phase === 'decode'}>
                     {item.label}
                   </ScrambledText>
                 </NavLink>
