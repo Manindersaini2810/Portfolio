@@ -1,4 +1,4 @@
-# Maninder Singh — Portfolio
+# Maninder Singh —  Portfolio
 
 A React, Vite, Tailwind CSS, Express and MongoDB portfolio with a neon-green terminal theme. Project and certificate pages use the REST API when available and local fallback data when it is not.
 
